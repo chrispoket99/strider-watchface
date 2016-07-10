@@ -13,29 +13,32 @@ GColor color_winner;
 // Is step data available?
 bool step_data_is_available() {
   return HealthServiceAccessibilityMaskAvailable &
-    health_service_metric_accessible(HealthMetricStepCount,
-      time_start_of_today(), time(NULL));
+    health_service_metric_accessible(HealthMetricStepCount,time_start_of_today(), time(NULL));
 }
 
 // Daily step goal
 static void get_step_goal() {
   const time_t start = time_start_of_today();
   const time_t end = start + SECONDS_PER_DAY;
-  s_step_goal = (int)health_service_sum_averaged(HealthMetricStepCount,
-    start, end, HealthServiceTimeScopeDaily);
+  s_step_goal = (int)health_service_sum_averaged(HealthMetricStepCount,start, end, HealthServiceTimeScopeDaily);
+    s_step_goal=9000;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "s_step_goal %d", s_step_goal);
 }
 
 // Todays current step count
 static void get_step_count() {
-  s_step_count = (int)health_service_sum_today(HealthMetricStepCount);
+  //s_step_count = (int)health_service_sum_today(HealthMetricStepCount);
+    s_step_count = 1500;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "s_step_count %d", s_step_count);
 }
 
 // Average daily step count for this time of day
 static void get_step_average() {
   const time_t start = time_start_of_today();
   const time_t end = time(NULL);
-  s_step_average = (int)health_service_sum_averaged(HealthMetricStepCount,
-    start, end, HealthServiceTimeScopeDaily);
+  s_step_average = (int)health_service_sum_averaged(HealthMetricStepCount, start, end, HealthServiceTimeScopeDaily);
+    s_step_average=3000;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "s_step_average %d", s_step_average);
 }
 
 static void display_step_count() {
@@ -90,7 +93,7 @@ static void dots_layer_update_proc(Layer *layer, GContext *ctx) {
   for(int i = 0; i < num_dots; i++) {
     GPoint pos = gpoint_from_polar(inset, GOvalScaleModeFitCircle,
       DEG_TO_TRIGANGLE(i * 360 / num_dots));
-    graphics_context_set_fill_color(ctx, GColorDarkGray);
+    graphics_context_set_fill_color(ctx, GColorLightGray );
     graphics_fill_circle(ctx, pos, 2);
   }
 }
@@ -101,9 +104,20 @@ static void progress_layer_update_proc(Layer *layer, GContext *ctx) {
   graphics_context_set_fill_color(ctx,
     s_step_count >= s_step_average ? color_winner : color_loser);
 
-  graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 12,
+    int grados=360* (s_step_count / s_step_goal);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "grados %d", grados);
+  graphics_fill_radial(ctx, inset, GOvalScaleModeFillCircle, 5,
     DEG_TO_TRIGANGLE(0),
-    DEG_TO_TRIGANGLE(360 * (s_step_count / s_step_goal)));
+    DEG_TO_TRIGANGLE(grados));
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "s_step_count %d", s_step_count);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "s_step_goal %d", s_step_goal);
+   // graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 12,DEG_TO_TRIGANGLE(0),DEG_TO_TRIGANGLE(200));
+    
+    int trigangle = DEG_TO_TRIGANGLE(360 * s_step_count / s_step_goal);
+  int line_width_trigangle = 1000;
+  // draw a very narrow radial (it's just a line)
+  graphics_fill_radial(ctx, inset, GOvalScaleModeFitCircle, 12,
+    trigangle - line_width_trigangle, trigangle);
 }
 
 static void average_layer_update_proc(Layer *layer, GContext *ctx) {
@@ -173,8 +187,8 @@ static void window_unload(Window *window) {
 }
 
 void init() {
-  color_loser = GColorPictonBlue;
-  color_winner = GColorJaegerGreen;
+  color_loser = GColorVividCerulean ;
+  color_winner = GColorGreen ;
 
   s_window = window_create();
   s_window_layer = window_get_root_layer(s_window);

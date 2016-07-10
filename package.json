@@ -1,0 +1,29 @@
+{
+    "author": "chris",
+    "dependencies": {},
+    "keywords": [],
+    "name": "chrisstrider",
+    "pebble": {
+        "capabilities": [
+            "health"
+        ],
+        "displayName": "ChrisStrider",
+        "enableMultiJS": true,
+        "messageKeys": {
+            "dummy": 0
+        },
+        "projectType": "native",
+        "resources": {
+            "media": []
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "basalt"
+        ],
+        "uuid": "5a2fe8b5-42d7-4462-b234-25e03ac2fffc",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}
